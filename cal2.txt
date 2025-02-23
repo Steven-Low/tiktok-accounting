@@ -1,0 +1,85 @@
+// Define variables to store total Revenue and Fees across all pages
+let totalRevenue = 0;
+let totalFees = 0;
+
+// Function to process table data on the current page
+function processTableData() {
+    // Select all rows on the current page
+    const rows = document.querySelectorAll('.theme-arco-table-tr');
+
+    rows.forEach(row => {
+        // Select the 5th column (td) using nth-child
+        const cell = row.querySelector('.theme-arco-table-td:nth-child(5)');
+        
+        if (cell) {
+            // Get all inner <div> elements within the cell
+            const divs = cell.querySelectorAll('div.flex.items-center');
+
+            divs.forEach(div => {
+                const label = div.querySelector('div.mr-4'); // Find the label ("Revenue" or "Fees")
+                const value = div.querySelector('p'); // Find the value inside <p>
+
+                if (label && value) {
+                    const text = label.textContent.trim();
+                    const valueMatch = value.textContent.trim().match(/RM(-?\d+(\.\d+)?)/);
+
+                    if (valueMatch) {
+                        const numericValue = parseFloat(valueMatch[1]);
+
+                        // Add to the correct sum based on the label
+                        if (text === "Revenue") {
+                            totalRevenue += numericValue;
+                        } else if (text === "Fees") {
+                            totalFees += numericValue;
+                        }
+                    }
+                }
+            });
+        }
+    });
+}
+
+// Function to move through pages and process data
+function processAllPages() {
+    // Select pagination list
+    const paginationList = document.querySelector('.theme-arco-pagination-list');
+
+    if (!paginationList) {
+        console.error('Pagination controls not found!');
+        return;
+    }
+
+    // Select all pagination items (page numbers)
+    const paginationItems = paginationList.querySelectorAll('.theme-arco-pagination-item');
+
+    let currentPage = 0;
+
+    // Helper function to process the next page
+    function processNextPage() {
+        if (currentPage >= paginationItems.length) {
+            // All pages processed, output the results
+            console.log('Total Revenue:', totalRevenue);
+            console.log('Total Fees:', totalFees);
+            return;
+        }
+
+        // Click the next page
+        const pageItem = paginationItems[currentPage];
+        if (pageItem) {
+            pageItem.click();
+
+            // Wait for the page to load (simulate with a timeout)
+            setTimeout(() => {
+                processTableData(); // Process data on the current page
+                currentPage++; // Move to the next page
+                processNextPage(); // Recursively process the next page
+            }, 1000); // Adjust timeout based on table loading time
+        }
+    }
+
+    // Start processing from the first page
+    processNextPage();
+}
+
+// Start processing all pages
+processAllPages();

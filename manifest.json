@@ -1,0 +1,28 @@
+{
+    "manifest_version": 3,
+    "name": "Table Sum Extension",
+    "description": "Sum Revenue and Fees from paginated table data",
+    "version": "2.0",
+    "permissions": [
+      "activeTab",
+      "scripting"
+    ],
+    "background": {
+      "service_worker": "background.js"
+    },
+    "action": {
+      "default_popup": "popup.html"
+    },
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content.js"]
+      }
+    ],
+    "icons": {
+      "16": "16x16.png",
+      "48": "48x48.png",
+      "128": "128x128.png"
+    }
+  }
+  
